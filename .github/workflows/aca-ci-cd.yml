@@ -25,24 +25,23 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # 3️⃣  Build → push → deploy in ONE action (no ACR Tasks)
+    # 3️⃣  Build ➜ push ➜ deploy in ONE step
     - uses: azure/container-apps-deploy-action@v1
       with:
-        # Where to push / pull the image
-        acrName:          ${{ env.REGISTRY }}
-        containerAppName: ${{ env.CONTAINER_APP }}
-        resourceGroup:    ${{ env.RESOURCE_GROUP }}
+        # --- WHICH IMAGE TO USE / BUILD ---------------------------
+        appSourcePath: ${{ github.workspace }}          # <-- NEW
+        acrName:       crsaas7700                       # registry *name* only
+        # ----------------------------------------------------------
 
-        # Tag image with the Git commit SHA so every build is unique
-        imageToBuild: ${{ env.REGISTRY }}/${{ env.CONTAINER_APP }}:${{ github.sha }}
+        containerAppName:  ${{ env.CONTAINER_APP }}
+        resourceGroup:     ${{ env.RESOURCE_GROUP }}
 
-        # ACR credentials (stored in repo secrets)
-        registryUsername: ${{ secrets.REGISTRY_USERNAME }}
-        registryPassword: ${{ secrets.REGISTRY_PASSWORD }}
+        registryUsername:  ${{ secrets.REGISTRY_USERNAME }}
+        registryPassword:  ${{ secrets.REGISTRY_PASSWORD }}
 
-        # Runtime env-vars for the container
         environmentVariables: |
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           NEXTAUTH_URL=https://${{ env.CONTAINER_APP }}.${{ env.AZURE_LOCATION }}.azurecontainerapps.io
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+
