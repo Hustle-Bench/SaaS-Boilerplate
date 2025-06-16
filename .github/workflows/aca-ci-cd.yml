@@ -29,9 +29,16 @@ jobs:
     - uses: azure/container-apps-deploy-action@v1
       with:
         # --- WHICH IMAGE TO USE / BUILD ---------------------------
-        appSourcePath: ${{ github.workspace }}          # <-- NEW
+        appSourcePath: ${{ github.workspace }}          # local Dockerfile build context
         acrName:       crsaas7700                       # registry *name* only
+        acrUsername:   ${{ secrets.REGISTRY_USERNAME }} # ACR admin user (push + pull)
+        acrPassword:   ${{ secrets.REGISTRY_PASSWORD }} # ACR admin password
         # ----------------------------------------------------------
+
+        # publish both a commit‑specific tag and the moving "latest" tag
+        tags: |
+          ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
+          ${{ env.REGISTRY }}/app-saas:latest
 
         containerAppName:  ${{ env.CONTAINER_APP }}
         resourceGroup:     ${{ env.RESOURCE_GROUP }}
@@ -41,4 +48,3 @@ jobs:
           NEXTAUTH_URL=https://${{ env.CONTAINER_APP }}.${{ env.AZURE_LOCATION }}.azurecontainerapps.io
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
-
