@@ -36,9 +36,6 @@ jobs:
         containerAppName:  ${{ env.CONTAINER_APP }}
         resourceGroup:     ${{ env.RESOURCE_GROUP }}
 
-        registryUsername:  ${{ secrets.REGISTRY_USERNAME }}
-        registryPassword:  ${{ secrets.REGISTRY_PASSWORD }}
-
         environmentVariables: |
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           NEXTAUTH_URL=https://${{ env.CONTAINER_APP }}.${{ env.AZURE_LOCATION }}.azurecontainerapps.io
