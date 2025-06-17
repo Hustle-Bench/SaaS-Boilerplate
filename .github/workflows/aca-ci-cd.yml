@@ -8,8 +8,8 @@ on:
 # ---------- Global constants you’ll reuse ----------
 env:
   AZURE_LOCATION: canadacentral # change if your ACA is in another region
-  CONTAINER_APP: app-saas      # name of the Container App resource
-  RESOURCE_GROUP: rg-saas      # RG that holds the Container App
+  CONTAINER_APP: app-saas # name of the Container App resource
+  RESOURCE_GROUP: rg-saas # RG that holds the Container App
   REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }} # crsaas7700.azurecr.io
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
             CLERK_API_KEY=dummy
             CLERK_PUBLISHABLE_KEY=dummy
 
-          # Publish both commit‑specific and moving "latest" tags
+          # Publish both commit-specific and moving "latest" tags
           tags: |
             ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
             ${{ env.REGISTRY }}/app-saas:latest
