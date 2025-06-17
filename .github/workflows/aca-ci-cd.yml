@@ -8,14 +8,13 @@ env:
   AZURE_LOCATION: canadacentral # change if your ACA is in another region
   CONTAINER_APP: app-saas # name of the Container App resource
   RESOURCE_GROUP: rg-saas # RG that holds the Container App
-  REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }} # crsaas7700.azurecr.io
+  REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+  CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEYR }}
+  CLERK_API_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+  CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    env:
-      CLERK_SECRET_KEY: sk_test_dummy_key_for_build_only_not_real
-      CLERK_API_KEY: sk_test_dummy_api_key_for_build_only_not_real
-      CLERK_PUBLISHABLE_KEY: pk_test_dummy_publishable_key_for_build_only
     steps:
       # 1️⃣ Pull down your repo's code
       - uses: actions/checkout@v4
@@ -24,9 +23,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       # 3️⃣ Skip Playwright tests for now
-      # - name: Run unit + e2e tests (skipped)
-        # if: ${{ false }}
-        # run: echo "Skipping Playwright tests in CI until Clerk keys are configured"
+      - name: Run unit + e2e tests
+        run: npm run test:e2e
       # 4️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
         with:
