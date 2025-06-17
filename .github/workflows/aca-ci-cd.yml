@@ -8,8 +8,8 @@ on:
 # ---------- Global constants you’ll reuse ----------
 env:
   AZURE_LOCATION: canadacentral # change if your ACA is in another region
-  CONTAINER_APP: app-saas # name of the Container App resource
-  RESOURCE_GROUP: rg-saas # RG that holds the Container App
+  CONTAINER_APP: app-saas      # name of the Container App resource
+  RESOURCE_GROUP: rg-saas      # RG that holds the Container App
   REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }} # crsaas7700.azurecr.io
 
 jobs:
@@ -32,19 +32,18 @@ jobs:
 
       # 4️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
-        env:
-          CLERK_SECRET_KEY: dummy
-          CLERK_API_KEY: dummy
-          CLERK_PUBLISHABLE_KEY: dummy
         with:
-          # ----------------------------------------------------------
           # Image build settings
-          appSourcePath: ${{ github.workspace }} # local Dockerfile build context
-          acrName: crsaas7700 # registry name only
-          acrUsername: ${{ secrets.REGISTRY_USERNAME }} # ACR admin user
-          acrPassword: ${{ secrets.REGISTRY_PASSWORD }} # ACR admin password
+          appSourcePath: ${{ github.workspace }}
+          acrName: crsaas7700
+          acrUsername: ${{ secrets.REGISTRY_USERNAME }}
+          acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
+          buildArguments: |
+            CLERK_SECRET_KEY=dummy
+            CLERK_API_KEY=dummy
+            CLERK_PUBLISHABLE_KEY=dummy
 
-          # Publish both commit-specific and moving "latest" tags
+          # Publish both commit‑specific and moving "latest" tags
           tags: |
             ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
             ${{ env.REGISTRY }}/app-saas:latest
