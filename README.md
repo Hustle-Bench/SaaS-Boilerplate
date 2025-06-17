@@ -126,7 +126,7 @@ Developer experience first, extremely flexible code structure and only keep what
 - 👤 Multi-Factor Auth (MFA), Social Auth (Google, Facebook, Twitter, GitHub, Apple, and more), User Impersonation
 - 📦 Type-safe ORM with DrizzleORM, compatible with PostgreSQL, SQLite, and MySQL
 - 💽 Offline and local development database with PGlite
-- 🌐 Multi-language (i18n) with [next-intl](https://next-intl-docs.vercel.app/) and [Crowdin](https://l.crowdin.com/next-js)
+- 🌐 Multi-language (i18n) with [next-intl](https://next-intl-docs.vercel.app/) and [Crowdin](https://l.crowdin.com/next-js) (currently disabled in the build)
 - ♻️ Type-safe environment variables with T3 Env
 - ⌨️ Form with [React Hook Form](https://react-hook-form.com)
 - 🔴 Validation library with [Zod](https://zod.dev)
