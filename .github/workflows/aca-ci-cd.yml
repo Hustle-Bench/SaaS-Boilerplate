@@ -39,10 +39,10 @@ jobs:
           acrUsername: ${{ secrets.REGISTRY_USERNAME }}
           acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
           buildArguments: |
-            CLERK_SECRET_KEY=dummy
-            CLERK_API_KEY=dummy
-            CLERK_PUBLISHABLE_KEY=dummy
-
+            CLERK_SECRET_KEY=sk_test_dummy_key_for_build_only_not_real            
+            CLERK_API_KEY=sk_test_dummy_api_key_for_build_only_not_real
+            CLERK_PUBLISHABLE_KEY=pk_test_dummy_publishable_key_for_build_only
+  
           # Publish both commit-specific and moving "latest" tags
           tags: |
             ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
