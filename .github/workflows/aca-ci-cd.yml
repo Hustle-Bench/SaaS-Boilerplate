@@ -1,35 +1,32 @@
 name: Build & Deploy to Azure Container Apps
-
 on:
   push:
     branches: [main] # run automatically on every push to main
   workflow_dispatch: # manual "Run workflow" button
-
-# ---------- Global constants you’ll reuse ----------
+# ---------- Global constants you'll reuse ----------
 env:
   AZURE_LOCATION: canadacentral # change if your ACA is in another region
   CONTAINER_APP: app-saas # name of the Container App resource
   RESOURCE_GROUP: rg-saas # RG that holds the Container App
   REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }} # crsaas7700.azurecr.io
-
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-
+    env:
+      CLERK_SECRET_KEY: sk_test_dummy_key_for_build_only_not_real
+      CLERK_API_KEY: sk_test_dummy_api_key_for_build_only_not_real
+      CLERK_PUBLISHABLE_KEY: pk_test_dummy_publishable_key_for_build_only
     steps:
-      # 1️⃣ Pull down your repo’s code
+      # 1️⃣ Pull down your repo's code
       - uses: actions/checkout@v4
-
       # 2️⃣ Log in to Azure with AZURE_CREDENTIALS
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       # 3️⃣ Skip Playwright tests for now
       - name: Run unit + e2e tests (skipped)
         if: ${{ false }}
         run: echo "Skipping Playwright tests in CI until Clerk keys are configured"
-
       # 4️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
         with:
@@ -38,19 +35,13 @@ jobs:
           acrName: crsaas7700
           acrUsername: ${{ secrets.REGISTRY_USERNAME }}
           acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
-          buildArguments: |
-            CLERK_SECRET_KEY=sk_test_dummy_key_for_build_only_not_real
-            CLERK_API_KEY=sk_test_dummy_api_key_for_build_only_not_real
-            CLERK_PUBLISHABLE_KEY=pk_test_dummy_publishable_key_for_build_only
 
           # Publish both commit-specific and moving "latest" tags
           tags: |
             ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
             ${{ env.REGISTRY }}/app-saas:latest
-
           containerAppName: ${{ env.CONTAINER_APP }}
           resourceGroup: ${{ env.RESOURCE_GROUP }}
-
           environmentVariables: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXTAUTH_URL=https://${{ env.CONTAINER_APP }}.${{ env.AZURE_LOCATION }}.azurecontainerapps.io
