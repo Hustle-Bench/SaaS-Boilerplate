@@ -32,6 +32,10 @@ jobs:
 
       # 4️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
+        env:
+          CLERK_SECRET_KEY: dummy
+          CLERK_API_KEY: dummy
+          CLERK_PUBLISHABLE_KEY: dummy
         with:
           # --- WHICH IMAGE TO USE / BUILD ---------------------------
           appSourcePath: ${{ github.workspace }} # local Dockerfile build context
@@ -41,7 +45,7 @@ jobs:
           # ----------------------------------------------------------
 
           # Publish both a commit‑specific tag and the moving "latest" tag
-          tags: |
+          tags: | |
             ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
             ${{ env.REGISTRY }}/app-saas:latest
 
