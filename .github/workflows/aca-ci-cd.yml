@@ -24,7 +24,10 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       # 3️⃣ Skip Playwright tests for now
       - name: Run unit + e2e tests
-        run: npm run test:e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps
+          npm run test:e2e
       # 4️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
         with:
