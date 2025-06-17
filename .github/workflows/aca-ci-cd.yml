@@ -2,49 +2,49 @@ name: Build & Deploy to Azure Container Apps
 
 on:
   push:
-    branches: [ main ]          # run automatically on every push to main
-  workflow_dispatch:            # plus a manual “Run workflow” button
+    branches: [main]          # run automatically on every push to main
+  workflow_dispatch:          # manual “Run workflow” button
 
 # ---------- Global constants you’ll reuse ----------
 env:
-  AZURE_LOCATION: canadacentral    # change if your ACA is in another region
-  CONTAINER_APP:  app-saas         # name of the Container App resource
-  RESOURCE_GROUP: rg-saas          # RG that holds the Container App
-  REGISTRY:       ${{ secrets.REGISTRY_LOGIN_SERVER }}  # crsaas7700.azurecr.io
+  AZURE_LOCATION: canadacentral  # change if your ACA is in another region
+  CONTAINER_APP: app-saas  # name of the Container App resource
+  RESOURCE_GROUP: rg-saas  # RG that holds the Container App
+  REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }}  # crsaas7700.azurecr.io
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣  Pull down your repo’s code
-    - uses: actions/checkout@v4
+      # 1️⃣  Pull down your repo’s code
+      - uses: actions/checkout@v4
 
-    # 2️⃣  Log in to Azure with the JSON you stored as AZURE_CREDENTIALS
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # 2️⃣  Log in to Azure with the JSON you stored as AZURE_CREDENTIALS
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # 3️⃣  Build ➜ push ➜ deploy in ONE step
-    - uses: azure/container-apps-deploy-action@v1
-      with:
-        # --- WHICH IMAGE TO USE / BUILD ---------------------------
-        appSourcePath: ${{ github.workspace }}          # local Dockerfile build context
-        acrName:       crsaas7700                       # registry *name* only
-        acrUsername:   ${{ secrets.REGISTRY_USERNAME }} # ACR admin user (push + pull)
-        acrPassword:   ${{ secrets.REGISTRY_PASSWORD }} # ACR admin password
-        # ----------------------------------------------------------
+      # 3️⃣  Build ➜ push ➜ deploy in ONE step
+      - uses: azure/container-apps-deploy-action@v1
+        with:
+          # --- WHICH IMAGE TO USE / BUILD ---------------------------
+          appSourcePath: ${{ github.workspace }}  # local Dockerfile build context
+          acrName: crsaas7700  # registry *name* only
+          acrUsername: ${{ secrets.REGISTRY_USERNAME }}  # ACR admin user (push + pull)
+          acrPassword: ${{ secrets.REGISTRY_PASSWORD }}  # ACR admin password
+          # ----------------------------------------------------------
 
-        # publish both a commit‑specific tag and the moving "latest" tag
-        tags: |
-          ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
-          ${{ env.REGISTRY }}/app-saas:latest
+          # publish both a commit‑specific tag and the moving "latest" tag
+          tags: |
+            ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
+            ${{ env.REGISTRY }}/app-saas:latest
 
-        containerAppName:  ${{ env.CONTAINER_APP }}
-        resourceGroup:     ${{ env.RESOURCE_GROUP }}
+          containerAppName: ${{ env.CONTAINER_APP }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
 
-        environmentVariables: |
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
-          NEXTAUTH_URL=https://${{ env.CONTAINER_APP }}.${{ env.AZURE_LOCATION }}.azurecontainerapps.io
-          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+          environmentVariables: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            NEXTAUTH_URL=https://${{ env.CONTAINER_APP }}.${{ env.AZURE_LOCATION }}.azurecontainerapps.io
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
