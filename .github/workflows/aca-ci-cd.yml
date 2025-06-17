@@ -25,6 +25,14 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # 3️⃣ Run unit + e2e tests
+      - name: Run unit + e2e tests
+        run: npm run test:e2e
+        env:
+          CLERK_SECRET_KEY: dummy
+          CLERK_API_KEY: dummy
+          CLERK_PUBLISHABLE_KEY: dummy
+
       # 3️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
         with:
