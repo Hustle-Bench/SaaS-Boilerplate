@@ -17,12 +17,11 @@ export default defineConfig({
     // In CI build a production bundle, then start Next.js in production mode.
     // Locally we still use the fast dev server.
     command: process.env.CI
-      ? 'npm run build && next start -p ' + PORT
+      ? `npm run build && next start -p ${PORT}`
       : 'npm run dev:next',
     url: baseURL,
     timeout: 2 * 60 * 1000,
     reuseExistingServer: !process.env.CI,
-  },
   },
   use: {
     baseURL,
