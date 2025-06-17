@@ -20,12 +20,12 @@ jobs:
       # 1️⃣ Pull down your repo’s code
       - uses: actions/checkout@v4
 
-      # 2️⃣ Log in to Azure with the JSON you stored as AZURE_CREDENTIALS
+      # 2️⃣ Log in to Azure with AZURE_CREDENTIALS
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 3️⃣ (Optional) E2E tests — skipped in CI for now
+      # 3️⃣ Skip Playwright tests for now
       - name: Run unit + e2e tests (skipped)
         if: ${{ false }}
         run: echo "Skipping Playwright tests in CI until Clerk keys are configured"
@@ -37,15 +37,15 @@ jobs:
           CLERK_API_KEY: dummy
           CLERK_PUBLISHABLE_KEY: dummy
         with:
-          # --- WHICH IMAGE TO USE / BUILD ---------------------------
+          # ----------------------------------------------------------
+          # Image build settings
           appSourcePath: ${{ github.workspace }} # local Dockerfile build context
           acrName: crsaas7700 # registry name only
           acrUsername: ${{ secrets.REGISTRY_USERNAME }} # ACR admin user
           acrPassword: ${{ secrets.REGISTRY_PASSWORD }} # ACR admin password
-          # ----------------------------------------------------------
 
-          # Publish both a commit‑specific tag and the moving "latest" tag
-          tags: | |
+          # Publish both commit-specific and moving "latest" tags
+          tags: |
             ${{ env.REGISTRY }}/app-saas:${{ github.sha }}
             ${{ env.REGISTRY }}/app-saas:latest
 
