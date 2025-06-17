@@ -3,7 +3,7 @@ name: Build & Deploy to Azure Container Apps
 on:
   push:
     branches: [main] # run automatically on every push to main
-  workflow_dispatch: # manual “Run workflow” button
+  workflow_dispatch: # manual "Run workflow" button
 
 # ---------- Global constants you’ll reuse ----------
 env:
@@ -25,15 +25,18 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 3️⃣ Run unit + e2e tests
-      - name: Run unit + e2e tests
-        env:
-          CLERK_SECRET_KEY: dummy
-          CLERK_API_KEY: dummy
-          CLERK_PUBLISHABLE_KEY: dummy
-        run: pm run test:e2e
+      # 3️⃣ Inject dummy Clerk env so createEnv validation passes
+      - name: Inject dummy Clerk env
+        run: |
+          echo 'CLERK_SECRET_KEY=dummy' >> .env
+          echo 'CLERK_API_KEY=dummy' >> .env
+          echo 'CLERK_PUBLISHABLE_KEY=dummy' >> .env
 
-      # 3️⃣ Build ➜ push ➜ deploy in ONE step
+      # 4️⃣ Run unit + e2e tests
+      - name: Run unit + e2e tests
+        run: npm run test:e2e
+
+      # 4️⃣ Build ➜ push ➜ deploy in ONE step
       - uses: azure/container-apps-deploy-action@v1
         with:
           # --- WHICH IMAGE TO USE / BUILD ---------------------------
